@@ -1,0 +1,44 @@
+@media (min-width: 600px) {
+  .view {
+    max-width: 700px;
+    padding: var(--spacing-lg);
+  }
+
+  .modal-content {
+    border-radius: var(--radius-lg);
+    margin-bottom: 10vh;
+  }
+
+  .modal-overlay.show {
+    align-items: center;
+  }
+
+  .metrics-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--spacing-md);
+  }
+
+  .filter-bar {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  .filter-bar > * {
+    flex: 1;
+    min-width: 150px;
+  }
+}
+
+@media (min-width: 900px) {
+  .view {
+    max-width: 900px;
+  }
+
+  .metrics-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .metric-card.full-width {
+    grid-column: span 2;
+  }
+}

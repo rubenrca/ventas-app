@@ -1,0 +1,126 @@
+.table-wrapper {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+}
+
+.data-table {
+  width: 100%;
+  font-size: var(--font-size-sm);
+}
+
+.data-table thead {
+  background: var(--color-bg);
+}
+
+.data-table th {
+  padding: 10px 12px;
+  text-align: left;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.data-table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--color-border);
+  white-space: nowrap;
+}
+
+.data-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.data-table .row-erica {
+  background: var(--color-erica);
+}
+
+.data-table .row-veronica {
+  background: var(--color-veronica);
+}
+
+.data-table .amount {
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.data-table .debt {
+  color: var(--color-danger);
+}
+
+.data-table .paid {
+  color: var(--color-success);
+}
+
+/* Mobile card layout */
+@media (max-width: 599px) {
+  .table-wrapper {
+    border: none;
+    background: none;
+  }
+
+  .data-table thead {
+    display: none;
+  }
+
+  .data-table,
+  .data-table tbody {
+    display: block;
+  }
+
+  .data-table tr {
+    display: block;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    padding: var(--spacing-sm) var(--spacing-md);
+    margin-bottom: var(--spacing-sm);
+    box-shadow: var(--shadow);
+  }
+
+  .data-table .row-erica {
+    border-left: 3px solid #2563eb;
+  }
+
+  .data-table .row-veronica {
+    border-left: 3px solid #9333ea;
+  }
+
+  .data-table td {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 4px 0;
+    border-bottom: none;
+    white-space: normal;
+  }
+
+  .data-table td::before {
+    content: attr(data-label);
+    font-weight: 600;
+    font-size: var(--font-size-xs);
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    min-width: 100px;
+  }
+
+  .data-table td:first-child {
+    padding-top: var(--spacing-xs);
+  }
+
+  .data-table td:last-child {
+    padding-bottom: var(--spacing-xs);
+  }
+}
+
+.table-count {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  margin-bottom: var(--spacing-sm);
+}
