@@ -134,34 +134,76 @@
 }
 
 .actions-cell {
-  white-space: nowrap;
-  text-align: right;
+  width: 40px;
+  text-align: center;
+  padding: 0 4px !important;
 }
 
-.btn-action {
+.kebab-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.btn-kebab {
   border: none;
   background: none;
-  font-size: var(--font-size-xs);
-  font-weight: 600;
+  font-size: 20px;
+  line-height: 1;
+  color: var(--color-text-muted);
   padding: 4px 8px;
   border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.btn-kebab:hover {
+  background: var(--color-border);
+  color: var(--color-text);
+}
+
+.kebab-menu {
+  display: none;
+  position: absolute;
+  right: 0;
+  top: 100%;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-lg);
+  z-index: 100;
+  min-width: 120px;
+  overflow: hidden;
+}
+
+.kebab-menu.open {
+  display: block;
+}
+
+.kebab-item {
+  display: block;
+  width: 100%;
+  border: none;
+  background: none;
+  padding: 10px 16px;
+  text-align: left;
+  font-size: var(--font-size-sm);
+  font-weight: 500;
   cursor: pointer;
   transition: background 0.15s;
 }
 
-.btn-edit {
+.kebab-item.btn-edit {
   color: var(--color-primary);
 }
 
-.btn-edit:hover {
+.kebab-item.btn-edit:hover {
   background: var(--color-primary-light);
 }
 
-.btn-delete {
+.kebab-item.btn-delete {
   color: var(--color-danger);
-  margin-left: 4px;
 }
 
-.btn-delete:hover {
+.kebab-item.btn-delete:hover {
   background: var(--color-danger-light);
 }

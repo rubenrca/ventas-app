@@ -59,8 +59,13 @@ window.ViewCatalogo = (function () {
         '<td data-label="Precio" class="amount">' + Utils.formatCurrency(p.precio) + '</td>' +
         '<td data-label="Vendedora">' + Utils.sellerBadge(vendedora) + '</td>' +
         '<td class="actions-cell">' +
-          '<button class="btn-action btn-edit" data-codigo="' + cod + '">Editar</button>' +
-          '<button class="btn-action btn-delete" data-codigo="' + cod + '">Eliminar</button>' +
+          '<div class="kebab-wrapper">' +
+            '<button class="btn-kebab" data-codigo="' + cod + '">&#8942;</button>' +
+            '<div class="kebab-menu">' +
+              '<button class="kebab-item btn-edit" data-codigo="' + cod + '">Editar</button>' +
+              '<button class="kebab-item btn-delete" data-codigo="' + cod + '">Eliminar</button>' +
+            '</div>' +
+          '</div>' +
         '</td>' +
       '</tr>';
     });
@@ -68,19 +73,39 @@ window.ViewCatalogo = (function () {
     html += '</tbody></table></div>';
     tableContainer.innerHTML = html;
 
-    tableContainer.querySelectorAll('.btn-edit').forEach(function (btn) {
+    tableContainer.querySelectorAll('.btn-kebab').forEach(function (btn) {
+      btn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        var menu = btn.nextElementSibling;
+        var isOpen = menu.classList.contains('open');
+        closeAllKebabs();
+        if (!isOpen) menu.classList.add('open');
+      });
+    });
+
+    tableContainer.querySelectorAll('.kebab-item.btn-edit').forEach(function (btn) {
       btn.addEventListener('click', function () {
+        closeAllKebabs();
         var codigo = btn.getAttribute('data-codigo');
         var producto = AppState.get('catalogoMap')[codigo];
         if (producto) showEditModal(producto);
       });
     });
 
-    tableContainer.querySelectorAll('.btn-delete').forEach(function (btn) {
+    tableContainer.querySelectorAll('.kebab-item.btn-delete').forEach(function (btn) {
       btn.addEventListener('click', function () {
+        closeAllKebabs();
         var codigo = btn.getAttribute('data-codigo');
         showDeleteModal(codigo);
       });
+    });
+
+    document.addEventListener('click', closeAllKebabs);
+  }
+
+  function closeAllKebabs() {
+    tableContainer.querySelectorAll('.kebab-menu.open').forEach(function (m) {
+      m.classList.remove('open');
     });
   }
 
