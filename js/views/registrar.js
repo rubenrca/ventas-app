@@ -1,8 +1,9 @@
 window.ViewRegistrar = (function () {
   var form, codeInput, nameInput, priceInput, sellerInput;
   var clientInput, paidInput, debtInput, methodSelect, dateInput;
-  var submitBtn, autocompleteHint;
+  var submitBtn, autocompleteHint, dropdown;
   var currentProduct = null;
+  var highlightedIndex = -1;
 
   function init() {
     var container = document.getElementById('view-registrar');
@@ -10,9 +11,10 @@ window.ViewRegistrar = (function () {
       '<h2 class="section-title">Registrar Venta</h2>' +
       '<form id="form-venta" autocomplete="off">' +
 
-        '<div class="form-group">' +
+        '<div class="form-group form-group-code">' +
           '<label class="form-label" for="venta-codigo">Código Producto</label>' +
           '<input class="form-input" type="text" id="venta-codigo" placeholder="Ej: E001, V015, EV010" inputmode="text">' +
+          '<div id="autocomplete-dropdown" class="autocomplete-dropdown"></div>' +
           '<div id="autocomplete-hint"></div>' +
         '</div>' +
 
@@ -81,17 +83,27 @@ window.ViewRegistrar = (function () {
     dateInput = document.getElementById('venta-fecha');
     submitBtn = document.getElementById('btn-registrar');
     autocompleteHint = document.getElementById('autocomplete-hint');
+    dropdown = document.getElementById('autocomplete-dropdown');
 
     dateInput.value = Utils.todayISO();
 
     // Events
-    codeInput.addEventListener('input', Utils.debounce(onCodeInput, 200));
+    codeInput.addEventListener('input', Utils.debounce(onCodeInput, 150));
+    codeInput.addEventListener('keydown', onKeyDown);
     paidInput.addEventListener('input', onPaidChange);
     form.addEventListener('submit', onSubmit);
+
+    document.addEventListener('click', function (e) {
+      if (!codeInput.parentNode.contains(e.target)) {
+        closeSuggestions();
+      }
+    });
   }
 
   function onCodeInput() {
     var code = Utils.normalizeCode(codeInput.value);
+    highlightedIndex = -1;
+
     if (code.length < 1) {
       clearAutocomplete();
       return;
@@ -100,6 +112,8 @@ window.ViewRegistrar = (function () {
     var product = AppState.get('catalogoMap')[code];
 
     if (product) {
+      // Coincidencia exacta
+      closeSuggestions();
       currentProduct = product;
       nameInput.value = product.nombre;
       priceInput.value = Utils.formatCurrency(product.precio);
@@ -120,7 +134,13 @@ window.ViewRegistrar = (function () {
       debtInput.value = '';
       codeInput.classList.remove('input-success');
 
-      if (code.length >= 2) {
+      var matches = getSuggestions(code);
+
+      if (matches.length > 0) {
+        autocompleteHint.innerHTML = '';
+        renderSuggestions(matches);
+      } else if (code.length >= 2) {
+        closeSuggestions();
         autocompleteHint.innerHTML =
           '<div class="autocomplete-info not-found">' +
             'Producto no encontrado. ' +
@@ -134,8 +154,98 @@ window.ViewRegistrar = (function () {
           });
         }
       } else {
+        closeSuggestions();
         autocompleteHint.innerHTML = '';
       }
+    }
+  }
+
+  function getSuggestions(code) {
+    var upper = code.toUpperCase();
+    var catalogo = AppState.get('catalogo');
+    return catalogo
+      .filter(function (p) {
+        return String(p.codigo).toUpperCase().startsWith(upper);
+      })
+      .sort(function (a, b) {
+        return String(a.codigo).localeCompare(String(b.codigo));
+      })
+      .slice(0, 8);
+  }
+
+  function renderSuggestions(matches) {
+    var html = '';
+    matches.forEach(function (p, i) {
+      html +=
+        '<div class="autocomplete-item" data-index="' + i + '">' +
+          '<span class="autocomplete-item-code">' + Utils.escapeHtml(String(p.codigo)) + '</span>' +
+          '<span class="autocomplete-item-name">' + Utils.escapeHtml(String(p.nombre)) + '</span>' +
+          '<span class="autocomplete-item-price">' + Utils.formatCurrency(p.precio) + '</span>' +
+        '</div>';
+    });
+    dropdown.innerHTML = html;
+    dropdown.classList.add('open');
+
+    dropdown.querySelectorAll('.autocomplete-item').forEach(function (el, i) {
+      el.addEventListener('mousedown', function (e) {
+        e.preventDefault(); // evitar que el input pierda el foco antes del click
+        selectSuggestion(matches[i]);
+      });
+    });
+  }
+
+  function closeSuggestions() {
+    dropdown.classList.remove('open');
+    dropdown.innerHTML = '';
+    highlightedIndex = -1;
+  }
+
+  function selectSuggestion(product) {
+    currentProduct = product;
+    codeInput.value = String(product.codigo);
+    nameInput.value = product.nombre;
+    priceInput.value = Utils.formatCurrency(product.precio);
+    sellerInput.value = Utils.sellerFromCode(String(product.codigo)) || '';
+    paidInput.value = product.precio;
+    debtInput.value = 0;
+    codeInput.classList.add('input-success');
+    autocompleteHint.innerHTML = '<div class="autocomplete-info">' +
+      Utils.escapeHtml(product.nombre) + ' — ' + Utils.formatCurrency(product.precio) +
+      '</div>';
+    closeSuggestions();
+    clientInput.focus();
+  }
+
+  function onKeyDown(e) {
+    if (!dropdown.classList.contains('open')) return;
+
+    var items = dropdown.querySelectorAll('.autocomplete-item');
+    if (items.length === 0) return;
+
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      highlightedIndex = Math.min(highlightedIndex + 1, items.length - 1);
+      updateHighlight(items);
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      highlightedIndex = Math.max(highlightedIndex - 1, 0);
+      updateHighlight(items);
+    } else if (e.key === 'Enter') {
+      if (highlightedIndex >= 0) {
+        e.preventDefault();
+        items[highlightedIndex].dispatchEvent(new MouseEvent('mousedown'));
+      }
+    } else if (e.key === 'Escape') {
+      closeSuggestions();
+    }
+  }
+
+  function updateHighlight(items) {
+    items.forEach(function (el, i) {
+      el.classList.toggle('highlighted', i === highlightedIndex);
+    });
+    if (highlightedIndex >= 0) {
+      items[highlightedIndex].scrollIntoView({ block: 'nearest' });
     }
   }
 
@@ -148,6 +258,7 @@ window.ViewRegistrar = (function () {
     debtInput.value = '';
     codeInput.classList.remove('input-success');
     autocompleteHint.innerHTML = '';
+    closeSuggestions();
   }
 
   function onPaidChange() {
@@ -265,7 +376,6 @@ window.ViewRegistrar = (function () {
           return Api.getCatalogo();
         })
         .then(function () {
-          // Trigger autocomplete refresh
           onCodeInput();
         })
         .catch(function () {
