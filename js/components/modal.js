@@ -19,10 +19,12 @@ window.Modal = (function () {
     });
   }
 
-  function show(title, contentHtml, onConfirm) {
+  function show(title, contentHtml, onConfirm, confirmLabel, danger) {
     titleEl.textContent = title;
     bodyEl.innerHTML = contentHtml;
     onConfirmCallback = onConfirm;
+    confirmBtn.textContent = confirmLabel || 'Guardar';
+    confirmBtn.className = 'btn ' + (danger ? 'btn-danger' : 'btn-primary');
     overlay.classList.add('show');
     // Focus first input if present
     var firstInput = bodyEl.querySelector('input, select');

@@ -97,7 +97,7 @@
   }
 
   .data-table .row-ambas {
-    border-left: 3px solid #16a34a;
+    border-left: 3px solid #ea580c;
   }
 
   .data-table td {
@@ -131,4 +131,37 @@
   font-size: var(--font-size-sm);
   color: var(--color-text-muted);
   margin-bottom: var(--spacing-sm);
+}
+
+.actions-cell {
+  white-space: nowrap;
+  text-align: right;
+}
+
+.btn-action {
+  border: none;
+  background: none;
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.btn-edit {
+  color: var(--color-primary);
+}
+
+.btn-edit:hover {
+  background: var(--color-primary-light);
+}
+
+.btn-delete {
+  color: var(--color-danger);
+  margin-left: 4px;
+}
+
+.btn-delete:hover {
+  background: var(--color-danger-light);
 }

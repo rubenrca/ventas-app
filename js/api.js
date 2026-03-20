@@ -50,10 +50,20 @@ window.Api = (function () {
     return apiCall('addProducto', prodObj);
   }
 
+  function updateProducto(prodObj) {
+    return apiCall('updateProducto', prodObj);
+  }
+
+  function deleteProducto(codigo) {
+    return apiCall('deleteProducto', { codigo: codigo });
+  }
+
   return {
     getVentas: getVentas,
     getCatalogo: getCatalogo,
     addVenta: addVenta,
-    addProducto: addProducto
+    addProducto: addProducto,
+    updateProducto: updateProducto,
+    deleteProducto: deleteProducto
   };
 })();

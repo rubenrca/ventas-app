@@ -35,6 +35,10 @@ function doGet(e) {
         return jsonResponse(addVenta(data));
       case 'addProducto':
         return jsonResponse(addProducto(data));
+      case 'updateProducto':
+        return jsonResponse(updateProducto(data));
+      case 'deleteProducto':
+        return jsonResponse(deleteProducto(data));
       default:
         return errorResponse('Acción no válida: ' + action);
     }
@@ -141,6 +145,65 @@ function addProducto(dataJson) {
   }
 
   return { success: true };
+}
+
+function updateProducto(dataJson) {
+  if (!dataJson) return { success: false, error: 'No se recibieron datos' };
+
+  const d = JSON.parse(decodeURIComponent(dataJson));
+
+  if (!d.codigo || !d.nombre || d.precio === undefined) {
+    return { success: false, error: 'Faltan campos requeridos' };
+  }
+
+  const codigo = d.codigo.trim().toUpperCase();
+  const lock = LockService.getScriptLock();
+  lock.waitLock(10000);
+
+  try {
+    const sheet = SpreadsheetApp.openById(SPREADSHEET_ID).getSheetByName(SHEET_CATALOGO);
+    const data = sheet.getDataRange().getValues();
+
+    for (let i = 1; i < data.length; i++) {
+      if (String(data[i][0]).trim().toUpperCase() === codigo) {
+        sheet.getRange(i + 1, 2).setValue(d.nombre.trim());
+        sheet.getRange(i + 1, 3).setValue(parseFloat(d.precio) || 0);
+        return { success: true };
+      }
+    }
+
+    return { success: false, error: 'Producto no encontrado' };
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+function deleteProducto(dataJson) {
+  if (!dataJson) return { success: false, error: 'No se recibieron datos' };
+
+  const d = JSON.parse(decodeURIComponent(dataJson));
+
+  if (!d.codigo) return { success: false, error: 'Falta el código' };
+
+  const codigo = d.codigo.trim().toUpperCase();
+  const lock = LockService.getScriptLock();
+  lock.waitLock(10000);
+
+  try {
+    const sheet = SpreadsheetApp.openById(SPREADSHEET_ID).getSheetByName(SHEET_CATALOGO);
+    const data = sheet.getDataRange().getValues();
+
+    for (let i = 1; i < data.length; i++) {
+      if (String(data[i][0]).trim().toUpperCase() === codigo) {
+        sheet.deleteRow(i + 1);
+        return { success: true };
+      }
+    }
+
+    return { success: false, error: 'Producto no encontrado' };
+  } finally {
+    lock.releaseLock();
+  }
 }
 
 // ---- Helpers ----
