@@ -50,13 +50,14 @@ window.ViewCatalogo = (function () {
       '</tr></thead><tbody>';
 
     sorted.forEach(function (p) {
-      var rowClass = Utils.sellerRowClass(p.vendedora);
+      var vendedora = Utils.sellerFromCode(String(p.codigo)) || p.vendedora || '';
+      var rowClass = Utils.sellerRowClass(vendedora);
       var cod = Utils.escapeHtml(String(p.codigo || ''));
       html += '<tr class="' + rowClass + '">' +
         '<td data-label="Código">' + cod + '</td>' +
         '<td data-label="Nombre">' + Utils.escapeHtml(String(p.nombre || '')) + '</td>' +
         '<td data-label="Precio" class="amount">' + Utils.formatCurrency(p.precio) + '</td>' +
-        '<td data-label="Vendedora">' + Utils.sellerBadge(p.vendedora) + '</td>' +
+        '<td data-label="Vendedora">' + Utils.sellerBadge(vendedora) + '</td>' +
         '<td class="actions-cell">' +
           '<button class="btn-action btn-edit" data-codigo="' + cod + '">Editar</button>' +
           '<button class="btn-action btn-delete" data-codigo="' + cod + '">Eliminar</button>' +

@@ -168,6 +168,7 @@ function updateProducto(dataJson) {
       if (String(data[i][0]).trim().toUpperCase() === codigo) {
         sheet.getRange(i + 1, 2).setValue(d.nombre.trim());
         sheet.getRange(i + 1, 3).setValue(parseFloat(d.precio) || 0);
+        sheet.getRange(i + 1, 4).setValue(sellerFromCode(codigo));
         return { success: true };
       }
     }
