@@ -10,7 +10,14 @@ const SHEET_VENTAS = 'Ventas';
 const SHEET_CATALOGO = 'Catalogo';
 
 // Mapeo de prefijo a vendedora
-const SELLERS = { E: 'Erica', V: 'Verónica' };
+const SELLERS = { E: 'Erica', V: 'Verónica', EV: 'Ambas' };
+
+function sellerFromCode(codigo) {
+  if (codigo.length >= 2 && SELLERS[codigo.slice(0, 2)]) {
+    return SELLERS[codigo.slice(0, 2)];
+  }
+  return SELLERS[codigo.charAt(0)] || null;
+}
 
 // ---- Entry Point ----
 
@@ -61,11 +68,10 @@ function addVenta(dataJson) {
   }
 
   const codigo = d.codigo_producto.trim().toUpperCase();
-  const prefix = codigo.charAt(0);
-  const vendedora = SELLERS[prefix];
+  const vendedora = sellerFromCode(codigo);
 
   if (!vendedora) {
-    return { success: false, error: 'Código debe empezar con E o V' };
+    return { success: false, error: 'Código debe empezar con E, V o EV' };
   }
 
   const fecha = d.fecha || Utilities.formatDate(new Date(), Session.getScriptTimeZone(), 'yyyy-MM-dd HH:mm:ss');
@@ -104,11 +110,10 @@ function addProducto(dataJson) {
   }
 
   const codigo = d.codigo.trim().toUpperCase();
-  const prefix = codigo.charAt(0);
-  const vendedora = SELLERS[prefix];
+  const vendedora = sellerFromCode(codigo);
 
   if (!vendedora) {
-    return { success: false, error: 'Código debe empezar con E o V' };
+    return { success: false, error: 'Código debe empezar con E, V o EV' };
   }
 
   const lock = LockService.getScriptLock();

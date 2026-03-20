@@ -45,6 +45,10 @@
   background: var(--color-veronica);
 }
 
+.data-table .row-ambas {
+  background: var(--color-ambas);
+}
+
 .data-table .amount {
   font-weight: 600;
   font-variant-numeric: tabular-nums;
@@ -90,6 +94,10 @@
 
   .data-table .row-veronica {
     border-left: 3px solid #9333ea;
+  }
+
+  .data-table .row-ambas {
+    border-left: 3px solid #16a34a;
   }
 
   .data-table td {

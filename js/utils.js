@@ -17,8 +17,11 @@ window.Utils = (function () {
 
   function sellerFromCode(code) {
     if (!code) return null;
-    var prefix = code.trim().toUpperCase().charAt(0);
-    return APP_CONFIG.SELLERS[prefix] || null;
+    var upper = code.trim().toUpperCase();
+    if (upper.length >= 2 && APP_CONFIG.SELLERS[upper.slice(0, 2)]) {
+      return APP_CONFIG.SELLERS[upper.slice(0, 2)];
+    }
+    return APP_CONFIG.SELLERS[upper.charAt(0)] || null;
   }
 
   function normalizeCode(code) {
@@ -60,12 +63,12 @@ window.Utils = (function () {
   }
 
   function sellerBadge(vendedora) {
-    var cls = vendedora === 'Erica' ? 'badge-erica' : 'badge-veronica';
+    var cls = vendedora === 'Erica' ? 'badge-erica' : vendedora === 'Ambas' ? 'badge-ambas' : 'badge-veronica';
     return '<span class="badge ' + cls + '">' + escapeHtml(vendedora) + '</span>';
   }
 
   function sellerRowClass(vendedora) {
-    return vendedora === 'Erica' ? 'row-erica' : 'row-veronica';
+    return vendedora === 'Erica' ? 'row-erica' : vendedora === 'Ambas' ? 'row-ambas' : 'row-veronica';
   }
 
   return {

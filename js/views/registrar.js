@@ -12,7 +12,7 @@ window.ViewRegistrar = (function () {
 
         '<div class="form-group">' +
           '<label class="form-label" for="venta-codigo">Código Producto</label>' +
-          '<input class="form-input" type="text" id="venta-codigo" placeholder="Ej: E001, V015" inputmode="text">' +
+          '<input class="form-input" type="text" id="venta-codigo" placeholder="Ej: E001, V015, EV010" inputmode="text">' +
           '<div id="autocomplete-hint"></div>' +
         '</div>' +
 

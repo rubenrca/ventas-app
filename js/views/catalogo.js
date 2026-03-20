@@ -65,8 +65,8 @@ window.ViewCatalogo = (function () {
   function showAddModal() {
     var html =
       '<div class="form-group">' +
-        '<label class="form-label">Código (empieza con E o V)</label>' +
-        '<input class="form-input" type="text" id="modal-cat-codigo" placeholder="Ej: E001, V015">' +
+        '<label class="form-label">Código (empieza con E, V o EV)</label>' +
+        '<input class="form-input" type="text" id="modal-cat-codigo" placeholder="Ej: E001, V015, EV010">' +
       '</div>' +
       '<div class="form-group">' +
         '<label class="form-label">Nombre del Producto</label>' +
@@ -89,7 +89,7 @@ window.ViewCatalogo = (function () {
 
       var seller = Utils.sellerFromCode(codigo);
       if (!seller) {
-        Toast.show('El código debe empezar con E o V', 'error');
+        Toast.show('El código debe empezar con E, V o EV', 'error');
         return;
       }
 
